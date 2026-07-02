@@ -77,7 +77,7 @@ const vidData = await vidRes.json();
 const analyticsBase = `https://youtubeanalytics.googleapis.com/v2/reports?ids=channel%3D%3D${CHANNEL_ID}&startDate=${startDate}&endDate=${endDate}`;
 
 const [mainRes, demoRes, geoRes] = await Promise.all([
-  fetch(`${analyticsBase}&metrics=views,estimatedMinutesWatched,averageViewDuration,averageViewPercentage,annotationClickThroughRate,viewerPercentage&dimensions=`, { headers: authHeaders }),
+  fetch(`${analyticsBase}&metrics=views,estimatedMinutesWatched,averageViewDuration,averageViewPercentage`, { headers: authHeaders }),
   fetch(`${analyticsBase}&metrics=viewerPercentage&dimensions=ageGroup,gender`, { headers: authHeaders }),
   fetch(`${analyticsBase}&metrics=views&dimensions=country&sort=-views&maxResults=5`, { headers: authHeaders }),
 ]);
