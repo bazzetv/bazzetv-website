@@ -37,12 +37,15 @@ function timeAgo(d) {
 function pct(n) { return Math.round(n * 10) / 10 + '%'; }
 
 function inject(html, attr, value) {
-  return html.replace(
-    new RegExp(`(data-stat="${attr}")[^<]*`), `$1>${value}`
-  ).replace(
-    // also update bar width
-    new RegExp(`(data-stat-bar="${attr}" style="width:)[^"]*`), `$1${value}`
+  // Replace text content after data-stat="attr">
+  html = html.replace(
+    new RegExp(`(data-stat="${attr}">)[^<]*`), `$1${value}`
   );
+  // Replace bar width (include closing quote)
+  html = html.replace(
+    new RegExp(`(data-stat-bar="${attr}" style="width:)[^"]*"`), `$1${value}"`
+  );
+  return html;
 }
 
 // ── get OAuth access token ─────────────────────────────────────────────────
