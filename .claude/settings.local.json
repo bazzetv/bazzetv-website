@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh auth *)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(gh repo *)",
+      "WebSearch",
+      "Bash(git push *)",
+      "Bash(cp \"/Users/issambazze/Desktop/Screenshot 2026-07-02 at 18.13.37.png\" /Users/issambazze/workspace/bazzetv/website/avatar.png)",
+      "Bash(sips -g pixelWidth -g pixelHeight /Users/issambazze/workspace/bazzetv/website/avatar.png)",
+      "Bash(cat /tmp/avatar_b64.txt)",
+      "Bash(python3 -)",
+      "Bash(curl -L -o /Users/issambazze/workspace/bazzetv/website/avatar_dl.jpg \"https://yt3.ggpht.com/ytc/AIdro_kifsfKU2b02gWbnfwrMxflgFDLFxVqG5nrjBrpwuxf2A=s600-c-k-c0x00ffffff-no-rj-rp-mo\")",
+      "Bash(ls -lt ~/Downloads/ | head -5)",
+      "Bash(cp \"/Users/issambazze/Downloads/ma tete.jpg\" /Users/issambazze/workspace/bazzetv/website/avatar.jpg)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(gh run *)",
+      "Bash(gh secret *)",
+      "WebFetch(domain:www.youtube.com)"
+    ]
+  }
+}
