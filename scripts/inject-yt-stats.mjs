@@ -106,7 +106,7 @@ const countryNames = { FR:'France', MA:'Morocco', CA:'Canada', BE:'Belgium', DZ:
 const totalGeoViews = (geoData.rows || []).reduce((s, [,v]) => s + v, 0);
 
 // ── build HTML ────────────────────────────────────────────────────────────
-let html = readFileSync('index.html', 'utf8');
+let html = readFileSync('mediakit/index.html', 'utf8');
 
 // channel
 if (chanStats) {
@@ -177,5 +177,5 @@ for (const item of (vidData.items || [])) {
   console.log(`✓ ${id}: ${views} views — "${title.slice(0,50)}"`);
 }
 
-writeFileSync('index.html', html);
+writeFileSync('mediakit/index.html', html);
 console.log('\n✅ index.html fully updated.');
