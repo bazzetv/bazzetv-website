@@ -29,7 +29,7 @@ function timeAgo(dateStr) {
 }
 
 const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=${VIDEO_IDS.join(',')}&key=${API_KEY}`;
-const res = await fetch(url);
+const res = await fetch(url, { headers: { Referer: 'https://bazzetv.fr' } });
 const data = await res.json();
 
 if (!data.items) { console.error('API error:', JSON.stringify(data)); process.exit(1); }
