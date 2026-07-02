@@ -112,9 +112,6 @@ if (chanStats) {
   console.log(`✓ Channel: ${fmt(+chanStats.subscriberCount)} subs, ${chanStats.videoCount} videos`);
 }
 
-if (mainData.error) console.error('Analytics API error:', JSON.stringify(mainData.error));
-console.log('Analytics rows:', JSON.stringify(mainData.rows));
-
 // 28-day stats
 if (row.length) {
   const watchHours = Math.round(watchMins / 60 / 100) / 10;
