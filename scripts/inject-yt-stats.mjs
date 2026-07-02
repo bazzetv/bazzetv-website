@@ -144,19 +144,15 @@ for (const [statKey, mapKey] of Object.entries(ageKeys)) {
 }
 console.log(`✓ Age demographics injected`);
 
-// geo — rebuild geo rows dynamically
+// geo — inject percentages via data-stat
 if (geoData.rows?.length) {
-  const geoRows = geoData.rows.slice(0, 5).map(([code, v]) => {
-    const p = Math.round(v / totalGeoViews * 1000) / 10;
-    const flag = flags[code] || '🌍';
-    const name = countryNames[code] || code;
-    return `<div class="geo-row"><span class="geo-flag">${flag}</span><span class="geo-name">${name}</span><span class="geo-pct">${p}%</span></div>`;
-  }).join('\n          ');
-  html = html.replace(
-    /<div class="geo-row">[\s\S]*?<\/div>\s*<\/div>\s*<\/div>\s*<\/div>/,
-    m => m.replace(/<div class="geo-row">[\s\S]*(?=<\/div>\s*<\/div>\s*<\/div>)/, geoRows + '\n        ')
-  );
-  console.log(`✓ Geo: ${geoData.rows.slice(0,5).map(([c])=>c).join(', ')}`);
+  const geoStatKeys = ['geo_FR', 'geo_MA', 'geo_CA', 'geo_BE', 'geo_DZ'];
+  const topRows = geoData.rows.slice(0, 5);
+  topRows.forEach(([code, v], i) => {
+    const p = Math.round(v / totalGeoViews * 1000) / 10 + '%';
+    html = inject(html, geoStatKeys[i], p);
+  });
+  console.log(`✓ Geo: ${topRows.map(([c])=>c).join(', ')}`);
 }
 
 // videos
