@@ -4,6 +4,7 @@ const API_KEY = process.env.YOUTUBE_API_KEY;
 if (!API_KEY) { console.error('Missing YOUTUBE_API_KEY'); process.exit(1); }
 
 const VIDEO_IDS = ['pRt6h1xFA9U', 'y5u2yPym1CI', 'UOiAT0sCeEM', '5h_v3HbX7k4'];
+const CHANNEL_ID = 'UCQZa27_VXLUowoMsYo6Y0Dw';
 
 function formatViews(n) {
   if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace('.0', '') + 'M';
@@ -28,13 +29,30 @@ function timeAgo(dateStr) {
   return `${Math.floor(diff/31536000)} years ago`;
 }
 
-const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=${VIDEO_IDS.join(',')}&key=${API_KEY}`;
-const res = await fetch(url, { headers: { Referer: 'https://bazzetv.fr' } });
-const data = await res.json();
+const headers = { Referer: 'https://bazzetv.fr' };
 
+// Fetch video stats
+const videoUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=${VIDEO_IDS.join(',')}&key=${API_KEY}`;
+const videoRes = await fetch(videoUrl, { headers });
+const data = await videoRes.json();
 if (!data.items) { console.error('API error:', JSON.stringify(data)); process.exit(1); }
 
+// Fetch channel stats
+const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${CHANNEL_ID}&key=${API_KEY}`;
+const channelRes = await fetch(channelUrl, { headers });
+const channelData = await channelRes.json();
+const channelStats = channelData.items?.[0]?.statistics;
+
 let html = readFileSync('index.html', 'utf8');
+
+// Inject channel stats
+if (channelStats) {
+  const subs = formatViews(parseInt(channelStats.subscriberCount));
+  const videos = channelStats.videoCount;
+  html = html.replace(/data-stat="subscribers">[^<]*</, `data-stat="subscribers">${subs}<`);
+  html = html.replace(/data-stat="videoCount">[^<]*</, `data-stat="videoCount">${videos}<`);
+  console.log(`✓ Channel: ${subs} subscribers, ${videos} videos`);
+}
 
 for (const item of data.items) {
   const id = item.id;
