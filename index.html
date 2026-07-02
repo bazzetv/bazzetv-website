@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BazzeTV — Créateur de contenu tech</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080a0f;
+      --bg-card: #0f1117;
+      --border: rgba(255,255,255,0.07);
+      --accent: #6c47ff;
+      --accent-2: #ff4ecd;
+      --text: #f0f0f5;
+      --muted: #6b7280;
+      --glow: rgba(108, 71, 255, 0.25);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* --- NOISE TEXTURE --- */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* --- GRADIENT BLOBS --- */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.35;
+    }
+    .blob-1 { width: 600px; height: 600px; background: var(--accent); top: -200px; left: -100px; }
+    .blob-2 { width: 500px; height: 500px; background: var(--accent-2); bottom: -150px; right: -100px; }
+
+    /* --- NAV --- */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(8, 10, 15, 0.6);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.6) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo span {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 20px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* --- MAIN CONTENT --- */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 140px 24px 80px;
+    }
+
+    /* --- HERO --- */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+
+    h1 {
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+      margin-bottom: 24px;
+    }
+    h1 .gradient {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 1.1rem;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 600px;
+      margin-bottom: 48px;
+    }
+
+    /* --- STATS GRID --- */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 64px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .stat-card:hover {
+      border-color: rgba(108,71,255,0.4);
+      transform: translateY(-2px);
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--glow) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .stat-card:hover::before { opacity: 1; }
+
+    .stat-icon {
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* --- ABOUT --- */
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .about-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px;
+      margin-bottom: 64px;
+    }
+
+    .about-card h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    .about-card p {
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 0.97rem;
+    }
+
+    /* --- TAGS --- */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .tag {
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* --- AUDIENCE --- */
+    .audience-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 64px;
+    }
+
+    .audience-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .audience-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      height: 5px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.07);
+      margin-top: 12px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    /* --- CONTACT --- */
+    .contact-card {
+      background: linear-gradient(135deg, rgba(108,71,255,0.12) 0%, rgba(255,78,205,0.08) 100%);
+      border: 1px solid rgba(108,71,255,0.3);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .contact-card h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+    .contact-card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 32px;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+    .contact-link:hover { transform: translateY(-2px); opacity: 0.9; }
+
+    .link-email {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+    }
+    .link-yt {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .link-ig {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    /* --- FOOTER --- */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 24px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 640px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .audience-grid { grid-template-columns: 1fr; }
+      nav { padding: 14px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">Bazze<span>TV</span></div>
+    <a href="mailto:contact@bazzetv.fr" class="nav-cta">
+      ✉️ Nous contacter
+    </a>
+  </nav>
+
+  <main>
+
+    <!-- HERO -->
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Disponible pour des partenariats — IFA Berlin 2025
+    </div>
+
+    <h1>
+      Créateur de contenu<br/>
+      <span class="gradient">tech & innovation</span>
+    </h1>
+
+    <p class="hero-desc">
+      BazzeTV décrypte l'actu tech avec passion — tests de produits, analyses de tendances
+      et guides accessibles pour une communauté engagée de passionnés.
+    </p>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-value">124K</div>
+        <div class="stat-label">Abonnés YouTube</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">▶️</div>
+        <div class="stat-value">8.2M</div>
+        <div class="stat-label">Vues totales</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📹</div>
+        <div class="stat-value">320+</div>
+        <div class="stat-label">Vidéos publiées</div>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <p class="section-title">À propos</p>
+    <div class="about-card">
+      <h2>La tech rendue accessible</h2>
+      <p>
+        Depuis 2019, BazzeTV accompagne une communauté francophone passionnée de technologie.
+        Tests approfondis, comparatifs honnêtes, et couverture des grands salons tech — dont
+        le CES de Las Vegas et l'IFA de Berlin. Un ton direct, des formats engageants et
+        une audience qui fait confiance aux recommandations.
+      </p>
+      <div class="tags">
+        <span class="tag">Smartphones</span>
+        <span class="tag">Audio</span>
+        <span class="tag">PC & Gaming</span>
+        <span class="tag">IA & Gadgets</span>
+        <span class="tag">Wearables</span>
+        <span class="tag">Unboxing</span>
+      </div>
+    </div>
+
+    <!-- AUDIENCE -->
+    <p class="section-title">Audience</p>
+    <div class="audience-grid">
+      <div class="audience-card">
+        <h3>Âge principal</h3>
+        <div style="margin-top: 16px;">
+          <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:var(--muted); margin-bottom:6px;">
+            <span>18–24 ans</span><span>38%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:38%"></div></div>
+          <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:var(--muted); margin-bottom:6px; margin-top:14px;">
+            <span>25–34 ans</span><span>45%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:45%"></div></div>
+          <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:var(--muted); margin-bottom:6px; margin-top:14px;">
+            <span>35+ ans</span><span>17%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:17%"></div></div>
+        </div>
+      </div>
+      <div class="audience-card">
+        <h3>Répartition géo</h3>
+        <div style="margin-top: 16px;">
+          <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:var(--muted); margin-bottom:6px;">
+            <span>🇫🇷 France</span><span>62%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:62%"></div></div>
+          <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:var(--muted); margin-bottom:6px; margin-top:14px;">
+            <span>🇧🇪 Belgique</span><span>18%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:18%"></div></div>
+          <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:var(--muted); margin-bottom:6px; margin-top:14px;">
+            <span>🌍 Reste monde</span><span>20%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="contact-card">
+      <h2>Travaillons ensemble</h2>
+      <p>Partenariat, test produit, présence à l'IFA Berlin — contactez-moi directement.</p>
+      <div class="contact-links">
+        <a href="mailto:contact@bazzetv.fr" class="contact-link link-email">✉️ contact@bazzetv.fr</a>
+        <a href="https://youtube.com/@bazzetv" target="_blank" class="contact-link link-yt">▶️ YouTube</a>
+        <a href="https://instagram.com/bazzetv" target="_blank" class="contact-link link-ig">📸 Instagram</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    © 2025 BazzeTV — Tous droits réservés
+  </footer>
+
+</body>
+</html>
