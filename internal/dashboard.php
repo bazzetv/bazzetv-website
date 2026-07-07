@@ -62,11 +62,11 @@ function fmt_num($n) {
     </div>
     <div class="widget-grid">
       <div class="widget">
-        <div class="label">Vues du jour</div>
+        <div class="label">Vues (mois en cours)</div>
         <div class="value <?= delta_class($today['views_delta'] ?? null) ?>"><?= fmt_delta($today['views_delta'] ?? null) ?></div>
       </div>
       <div class="widget">
-        <div class="label">Nouveaux abonnés du jour</div>
+        <div class="label">Nouveaux abonnés (mois en cours)</div>
         <div class="value <?= delta_class($today['subscribers_delta'] ?? null) ?>"><?= fmt_delta($today['subscribers_delta'] ?? null) ?></div>
       </div>
       <div class="widget">

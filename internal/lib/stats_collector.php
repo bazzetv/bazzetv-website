@@ -16,8 +16,9 @@ function yt_curl_json(string $url, array $headers = [], ?array $postFields = nul
   return json_decode($response, true) ?? [];
 }
 
-// Fetches current YouTube stats, snapshots yesterday's date (Analytics API has
-// a 24-48h processing lag), and upserts into stats_daily. Returns the saved row.
+// Fetches current YouTube stats (live totals + month-to-date views/subscribers
+// gained/watch-time from the Analytics API) and upserts into stats_daily.
+// stat_date is always "yesterday" since Analytics data has a processing lag.
 function collect_youtube_stats(): array {
   $token = yt_curl_json('https://oauth2.googleapis.com/token', [], [
     'client_id' => GOOGLE_CLIENT_ID,
@@ -56,21 +57,19 @@ function collect_youtube_stats(): array {
 
   $analytics = yt_curl_json(
     'https://youtubeanalytics.googleapis.com/v2/reports?ids=channel%3D%3D' . YT_CHANNEL_ID .
-    "&startDate={$monthStart}&endDate={$statDate}&metrics=estimatedMinutesWatched",
+    "&startDate={$monthStart}&endDate={$statDate}&metrics=views,subscribersGained,estimatedMinutesWatched",
     $authHeaders
   );
-  $watchMinutes = isset($analytics['rows'][0][0]) ? (int)$analytics['rows'][0][0] : null;
-  $watchMinutesError = null;
-  if ($watchMinutes === null) {
-    $watchMinutesError = $analytics['error']['message'] ?? ('Réponse Analytics inattendue: ' . json_encode($analytics));
+  $row = $analytics['rows'][0] ?? null;
+  // views_delta / subscribers_delta hold month-to-date totals (not a day-over-day
+  // delta, despite the column name — repurposed to avoid a schema migration).
+  $viewsMonth = $row[0] ?? null;
+  $subscribersGainedMonth = $row[1] ?? null;
+  $watchMinutes = $row[2] ?? null;
+  $analyticsError = null;
+  if ($row === null) {
+    $analyticsError = $analytics['error']['message'] ?? ('Réponse Analytics inattendue: ' . json_encode($analytics));
   }
-
-  $prevStmt = db()->prepare('SELECT subscribers, views_total FROM stats_daily WHERE stat_date < ? ORDER BY stat_date DESC LIMIT 1');
-  $prevStmt->execute([$statDate]);
-  $prev = $prevStmt->fetch();
-
-  $subscribersDelta = $prev ? $subscribers - (int)$prev['subscribers'] : null;
-  $viewsDelta = $prev ? $viewsTotal - (int)$prev['views_total'] : null;
 
   $stmt = db()->prepare('
     INSERT INTO stats_daily (stat_date, subscribers, subscribers_delta, views_total, views_delta, video_count, watch_minutes)
@@ -83,16 +82,16 @@ function collect_youtube_stats(): array {
       video_count = VALUES(video_count),
       watch_minutes = VALUES(watch_minutes)
   ');
-  $stmt->execute([$statDate, $subscribers, $subscribersDelta, $viewsTotal, $viewsDelta, $videoCount, $watchMinutes]);
+  $stmt->execute([$statDate, $subscribers, $subscribersGainedMonth, $viewsTotal, $viewsMonth, $videoCount, $watchMinutes]);
 
   return [
     'stat_date' => $statDate,
     'subscribers' => $subscribers,
-    'subscribers_delta' => $subscribersDelta,
+    'subscribers_delta' => $subscribersGainedMonth,
     'views_total' => $viewsTotal,
-    'views_delta' => $viewsDelta,
+    'views_delta' => $viewsMonth,
     'video_count' => $videoCount,
     'watch_minutes' => $watchMinutes,
-    'watch_minutes_error' => $watchMinutesError,
+    'watch_minutes_error' => $analyticsError,
   ];
 }
