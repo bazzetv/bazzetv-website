@@ -32,6 +32,11 @@ function delta_class($n) {
   return 'flat';
 }
 
+function fmt_hours($minutes) {
+  if ($minutes === null) return '—';
+  return number_format((float)$minutes / 60, 1, ',', ' ') . ' h';
+}
+
 function fmt_num($n) {
   if ($n === null) return '—';
   return number_format((float)$n, 0, ',', ' ');
@@ -83,7 +88,7 @@ function fmt_num($n) {
       </div>
       <div class="widget">
         <div class="label">Minutes vues (mois en cours)</div>
-        <div class="value"><?= fmt_num($today['watch_minutes'] ?? null) ?></div>
+        <div class="value"><?= fmt_hours($today['watch_minutes'] ?? null) ?></div>
       </div>
     </div>
     <?php if ($today): ?>

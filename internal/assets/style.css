@@ -63,7 +63,7 @@ h1 { font-size: 22px; margin-bottom: 24px; }
   border-radius: 14px;
   padding: 20px;
 }
-.widget .label { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+.widget .label { font-size: 13px; line-height: 1.35; color: var(--muted); margin-bottom: 8px; min-height: 2.7em; display: flex; align-items: flex-end; }
 .widget .value { font-size: 28px; font-weight: 700; }
 .widget .value.up { color: var(--green); }
 .widget .value.down { color: var(--red); }
