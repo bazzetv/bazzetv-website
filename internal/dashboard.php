@@ -4,6 +4,17 @@ require_login();
 require_once __DIR__ . '/db.php';
 
 $today = db()->query('SELECT * FROM stats_daily ORDER BY stat_date DESC LIMIT 1')->fetch();
+$collectError = null;
+
+if (!$today) {
+  require_once __DIR__ . '/lib/stats_collector.php';
+  try {
+    collect_youtube_stats();
+    $today = db()->query('SELECT * FROM stats_daily ORDER BY stat_date DESC LIMIT 1')->fetch();
+  } catch (Throwable $e) {
+    $collectError = $e->getMessage();
+  }
+}
 
 function delta_html($n) {
   if ($n === null) return '';
@@ -60,6 +71,8 @@ function fmt_num($n) {
     </div>
     <?php if ($today): ?>
       <p class="stale-note">Dernière collecte : <?= htmlspecialchars($today['stat_date']) ?> (les données YouTube Analytics ont 24-48h de latence, ce ne sont pas des chiffres "temps réel").</p>
+    <?php elseif ($collectError): ?>
+      <p class="stale-note">Aucune donnée collectée pour l'instant. La collecte automatique a échoué au chargement de cette page : <?= htmlspecialchars($collectError) ?>. Vérifie les identifiants YouTube/Google dans les secrets, ou attends le prochain passage du cron.</p>
     <?php else: ?>
       <p class="stale-note">Aucune donnée collectée pour l'instant — le script <code>internal/cron/collect-stats.php</code> doit tourner au moins une fois.</p>
     <?php endif; ?>
