@@ -103,6 +103,20 @@ button:hover, .btn:hover { filter: brightness(1.1); }
 
 /* ── kanban ────────────────────────────────────────────────────── */
 .board-toolbar { display: flex; justify-content: flex-end; margin-bottom: 16px; }
+.board-summary {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;
+}
+.summary-pill {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 8px 14px;
+  font-size: 13px; color: var(--muted);
+}
+.summary-pill strong { color: var(--text); font-size: 14px; margin-left: 6px; }
+.summary-pill.pending strong { color: var(--red); }
+.summary-pill.paid strong { color: var(--green); }
+.column-total {
+  font-size: 12px; color: var(--muted); font-weight: 400; display: block; margin-top: 2px;
+}
 .board {
   display: flex; gap: 14px; overflow-x: auto; padding-bottom: 12px;
 }

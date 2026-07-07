@@ -1,5 +1,6 @@
 (function () {
   const board = document.getElementById('board');
+  const summary = document.getElementById('board-summary');
   const stages = JSON.parse(board.dataset.stages);
   const modalBackdrop = document.getElementById('modal-backdrop');
   const modalTitle = document.getElementById('modal-title');
@@ -8,6 +9,14 @@
   const paymentLabels = { unpaid: 'Non payé', pending: 'En attente', partial: 'Partiel', paid: 'Payé' };
 
   let cards = [];
+
+  function fmtAmount(n) {
+    return Number(n).toLocaleString('fr-FR', { minimumFractionDigits: 0 }) + ' EUR';
+  }
+
+  function sumAmount(list) {
+    return list.reduce((s, c) => s + (c.payment_amount !== null ? Number(c.payment_amount) : 0), 0);
+  }
 
   async function api(action, payload, method) {
     const opts = { method: method || 'POST', headers: { 'Content-Type': 'application/json' } };
@@ -70,14 +79,25 @@
     return el;
   }
 
+  function renderSummary() {
+    const paid = cards.filter((c) => c.payment_status === 'paid');
+    const pending = cards.filter((c) => c.payment_status !== 'paid');
+    summary.innerHTML = `
+      <div class="summary-pill pending">En attente<strong>${fmtAmount(sumAmount(pending))}</strong></div>
+      <div class="summary-pill paid">Payé<strong>${fmtAmount(sumAmount(paid))}</strong></div>
+    `;
+  }
+
   function render() {
+    renderSummary();
     board.innerHTML = '';
     for (const [key, label] of stages) {
       const col = document.createElement('div');
       col.className = 'column';
       col.dataset.stage = key;
       const inStage = cards.filter((c) => c.stage === key);
-      col.innerHTML = `<h2>${label} <span class="count">(${inStage.length})</span></h2>`;
+      const total = sumAmount(inStage);
+      col.innerHTML = `<h2>${label} <span class="count">(${inStage.length})</span>${total > 0 ? `<span class="column-total">${fmtAmount(total)}</span>` : ''}</h2>`;
       inStage.forEach((c) => col.appendChild(cardEl(c)));
 
       col.addEventListener('dragover', (e) => { e.preventDefault(); col.classList.add('dragover'); });
