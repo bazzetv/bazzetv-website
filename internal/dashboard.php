@@ -16,12 +16,17 @@ if (!$today) {
   }
 }
 
-function delta_html($n) {
-  if ($n === null) return '';
+function fmt_delta($n) {
+  if ($n === null) return '—';
   $n = (int)$n;
-  if ($n > 0) return '<span class="delta up">+' . $n . ' vs veille</span>';
-  if ($n < 0) return '<span class="delta down">' . $n . ' vs veille</span>';
-  return '<span class="delta flat">= vs veille</span>';
+  return ($n > 0 ? '+' : '') . number_format($n, 0, ',', ' ');
+}
+
+function delta_class($n) {
+  if ($n === null) return '';
+  if ($n > 0) return 'up';
+  if ($n < 0) return 'down';
+  return 'flat';
 }
 
 function fmt_num($n) {
@@ -51,14 +56,20 @@ function fmt_num($n) {
     <h1>Dashboard</h1>
     <div class="widget-grid">
       <div class="widget">
-        <div class="label">Abonnés</div>
+        <div class="label">Vues du jour</div>
+        <div class="value <?= delta_class($today['views_delta'] ?? null) ?>"><?= fmt_delta($today['views_delta'] ?? null) ?></div>
+      </div>
+      <div class="widget">
+        <div class="label">Nouveaux abonnés du jour</div>
+        <div class="value <?= delta_class($today['subscribers_delta'] ?? null) ?>"><?= fmt_delta($today['subscribers_delta'] ?? null) ?></div>
+      </div>
+      <div class="widget">
+        <div class="label">Abonnés (total)</div>
         <div class="value"><?= fmt_num($today['subscribers'] ?? null) ?></div>
-        <?= delta_html($today['subscribers_delta'] ?? null) ?>
       </div>
       <div class="widget">
         <div class="label">Vues totales</div>
         <div class="value"><?= fmt_num($today['views_total'] ?? null) ?></div>
-        <?= delta_html($today['views_delta'] ?? null) ?>
       </div>
       <div class="widget">
         <div class="label">Vidéos publiées</div>

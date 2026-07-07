@@ -62,6 +62,8 @@ h1 { font-size: 22px; margin-bottom: 24px; }
 }
 .widget .label { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
 .widget .value { font-size: 28px; font-weight: 700; }
+.widget .value.up { color: var(--green); }
+.widget .value.down { color: var(--red); }
 .widget .delta { font-size: 13px; margin-top: 6px; }
 .widget .delta.up { color: var(--green); }
 .widget .delta.down { color: var(--red); }
