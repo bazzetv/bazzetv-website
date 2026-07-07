@@ -52,6 +52,10 @@ function collect_youtube_stats(): array {
     $authHeaders
   );
   $watchMinutes = isset($analytics['rows'][0][0]) ? (int)$analytics['rows'][0][0] : null;
+  $watchMinutesError = null;
+  if ($watchMinutes === null) {
+    $watchMinutesError = $analytics['error']['message'] ?? ('Réponse Analytics inattendue: ' . json_encode($analytics));
+  }
 
   $prevStmt = db()->prepare('SELECT subscribers, views_total FROM stats_daily WHERE stat_date < ? ORDER BY stat_date DESC LIMIT 1');
   $prevStmt->execute([$statDate]);
@@ -81,5 +85,6 @@ function collect_youtube_stats(): array {
     'views_delta' => $viewsDelta,
     'video_count' => $videoCount,
     'watch_minutes' => $watchMinutes,
+    'watch_minutes_error' => $watchMinutesError,
   ];
 }

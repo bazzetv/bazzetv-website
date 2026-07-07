@@ -3,13 +3,16 @@ require_once __DIR__ . '/auth.php';
 require_login();
 require_once __DIR__ . '/db.php';
 
+$refresh = isset($_GET['refresh']);
 $today = db()->query('SELECT * FROM stats_daily ORDER BY stat_date DESC LIMIT 1')->fetch();
 $collectError = null;
+$watchMinutesError = null;
 
-if (!$today) {
+if (!$today || $refresh) {
   require_once __DIR__ . '/lib/stats_collector.php';
   try {
-    collect_youtube_stats();
+    $result = collect_youtube_stats();
+    $watchMinutesError = $result['watch_minutes_error'] ?? null;
     $today = db()->query('SELECT * FROM stats_daily ORDER BY stat_date DESC LIMIT 1')->fetch();
   } catch (Throwable $e) {
     $collectError = $e->getMessage();
@@ -53,7 +56,10 @@ function fmt_num($n) {
     </div>
   </nav>
   <main>
-    <h1>Dashboard</h1>
+    <div class="page-header">
+      <h1>Dashboard</h1>
+      <a class="btn secondary" href="dashboard.php?refresh=1">🔄 Rafraîchir</a>
+    </div>
     <div class="widget-grid">
       <div class="widget">
         <div class="label">Vues du jour</div>
@@ -82,10 +88,14 @@ function fmt_num($n) {
     </div>
     <?php if ($today): ?>
       <p class="stale-note">Dernière collecte : <?= htmlspecialchars($today['stat_date']) ?> (les données YouTube Analytics ont 24-48h de latence, ce ne sont pas des chiffres "temps réel").</p>
-    <?php elseif ($collectError): ?>
-      <p class="stale-note">Aucune donnée collectée pour l'instant. La collecte automatique a échoué au chargement de cette page : <?= htmlspecialchars($collectError) ?>. Vérifie les identifiants YouTube/Google dans les secrets, ou attends le prochain passage du cron.</p>
-    <?php else: ?>
+    <?php elseif (!$collectError): ?>
       <p class="stale-note">Aucune donnée collectée pour l'instant — le script <code>internal/cron/collect-stats.php</code> doit tourner au moins une fois.</p>
+    <?php endif; ?>
+    <?php if ($collectError): ?>
+      <p class="stale-note">⚠️ La collecte a échoué : <?= htmlspecialchars($collectError) ?>. Vérifie les identifiants YouTube/Google dans les secrets.</p>
+    <?php endif; ?>
+    <?php if ($watchMinutesError): ?>
+      <p class="stale-note">⚠️ Minutes vues non récupérées (Analytics API) : <?= htmlspecialchars($watchMinutesError) ?></p>
     <?php endif; ?>
   </main>
 </body>
