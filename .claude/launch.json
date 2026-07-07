@@ -6,6 +6,12 @@
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "3456"],
       "port": 3456
+    },
+    {
+      "name": "bazzetv-internal-php",
+      "runtimeExecutable": "/opt/homebrew/bin/php",
+      "runtimeArgs": ["-S", "127.0.0.1:8765", "-t", "."],
+      "port": 8765
     }
   ]
 }

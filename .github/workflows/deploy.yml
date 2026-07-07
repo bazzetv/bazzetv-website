@@ -27,6 +27,35 @@ jobs:
           GOOGLE_CLIENT_SECRET:  ${{ secrets.GOOGLE_CLIENT_SECRET }}
           GOOGLE_REFRESH_TOKEN:  ${{ secrets.GOOGLE_REFRESH_TOKEN }}
 
+      - name: Generate internal config
+        # Note: DB_PASS / ADMIN_PASSWORD_HASH must not contain single quotes or backslashes
+        # (they're inserted as literal PHP single-quoted strings below).
+        run: |
+          cat <<EOF > internal/config.php
+          <?php
+          define('DB_HOST', '${DB_HOST}');
+          define('DB_NAME', '${DB_NAME}');
+          define('DB_USER', '${DB_USER}');
+          define('DB_PASS', '${DB_PASS}');
+          define('ADMIN_USER', '${ADMIN_USER}');
+          define('ADMIN_PASSWORD_HASH', '${ADMIN_PASSWORD_HASH}');
+          define('YOUTUBE_API_KEY', '${YOUTUBE_API_KEY}');
+          define('GOOGLE_CLIENT_ID', '${GOOGLE_CLIENT_ID}');
+          define('GOOGLE_CLIENT_SECRET', '${GOOGLE_CLIENT_SECRET}');
+          define('GOOGLE_REFRESH_TOKEN', '${GOOGLE_REFRESH_TOKEN}');
+          EOF
+        env:
+          DB_HOST:              ${{ secrets.DB_HOST }}
+          DB_NAME:               ${{ secrets.DB_NAME }}
+          DB_USER:               ${{ secrets.DB_USER }}
+          DB_PASS:               ${{ secrets.DB_PASS }}
+          ADMIN_USER:            ${{ secrets.ADMIN_USER }}
+          ADMIN_PASSWORD_HASH:   ${{ secrets.ADMIN_PASSWORD_HASH }}
+          YOUTUBE_API_KEY:       ${{ secrets.YOUTUBE_API_KEY }}
+          GOOGLE_CLIENT_ID:      ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET:  ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN:  ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:

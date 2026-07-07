@@ -1,0 +1,168 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #07090e;
+  --bg-card: #0d0f16;
+  --bg-card-2: #111420;
+  --border: rgba(255,255,255,0.07);
+  --border-hover: rgba(108,71,255,0.35);
+  --accent: #6c47ff;
+  --accent-2: #ff4ecd;
+  --red: #ff3b3b;
+  --green: #2ecc71;
+  --yellow: #f5c542;
+  --text: #eeeef5;
+  --muted: #6b7280;
+  --muted-2: #4b5563;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+a { color: inherit; }
+
+nav {
+  position: sticky; top: 0; z-index: 100;
+  padding: 16px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(7,9,14,0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+nav .brand { font-weight: 700; letter-spacing: 0.02em; }
+nav .links { display: flex; gap: 20px; align-items: center; }
+nav .links a {
+  text-decoration: none; color: var(--muted); font-size: 14px; font-weight: 500;
+  padding: 6px 4px; border-bottom: 2px solid transparent;
+}
+nav .links a.active, nav .links a:hover { color: var(--text); border-color: var(--accent); }
+nav .links a.logout { color: var(--red); }
+
+main { max-width: 1100px; margin: 0 auto; padding: 32px 20px 80px; }
+
+h1 { font-size: 22px; margin-bottom: 24px; }
+
+/* ── dashboard widgets ─────────────────────────────────────────── */
+.widget-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+.widget {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+}
+.widget .label { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+.widget .value { font-size: 28px; font-weight: 700; }
+.widget .delta { font-size: 13px; margin-top: 6px; }
+.widget .delta.up { color: var(--green); }
+.widget .delta.down { color: var(--red); }
+.widget .delta.flat { color: var(--muted); }
+.stale-note {
+  font-size: 13px; color: var(--muted); margin-top: 20px;
+}
+
+/* ── login ─────────────────────────────────────────────────────── */
+.login-wrap {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.login-card {
+  width: 100%; max-width: 360px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+}
+.login-card h1 { font-size: 18px; margin-bottom: 20px; text-align: center; }
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+input[type="text"], input[type="password"] {
+  width: 100%; padding: 10px 12px;
+  background: var(--bg-card-2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); font-size: 14px;
+}
+input:focus { outline: none; border-color: var(--border-hover); }
+button, .btn {
+  cursor: pointer; border: none; border-radius: 8px;
+  padding: 10px 16px; font-size: 14px; font-weight: 600;
+  background: var(--accent); color: #fff;
+}
+button:hover, .btn:hover { filter: brightness(1.1); }
+.btn.secondary { background: var(--bg-card-2); color: var(--text); border: 1px solid var(--border); }
+.btn.danger { background: var(--red); }
+.error { color: var(--red); font-size: 13px; margin-bottom: 12px; }
+
+/* ── kanban ────────────────────────────────────────────────────── */
+.board-toolbar { display: flex; justify-content: flex-end; margin-bottom: 16px; }
+.board {
+  display: flex; gap: 14px; overflow-x: auto; padding-bottom: 12px;
+}
+.column {
+  flex: 0 0 260px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  min-height: 200px;
+}
+.column.dragover { border-color: var(--border-hover); }
+.column h2 { font-size: 14px; margin-bottom: 10px; color: var(--muted); }
+.column h2 .count { color: var(--muted-2); font-weight: 400; }
+.card {
+  background: var(--bg-card-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  cursor: grab;
+}
+.card .brand { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+.card .meta { font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.card .tag {
+  padding: 2px 8px; border-radius: 999px; font-size: 11px;
+  background: var(--bg-card); border: 1px solid var(--border);
+}
+.card .tag.paid { color: var(--green); border-color: var(--green); }
+.card .tag.partial { color: var(--yellow); border-color: var(--yellow); }
+.card .tag.pending, .card .tag.unpaid { color: var(--red); border-color: var(--red); }
+.card .move-row { display: flex; gap: 6px; align-items: center; }
+.card select { flex: 1; font-size: 12px; padding: 4px 6px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; color: var(--text); }
+.card .card-actions { display: flex; gap: 6px; }
+.card .card-actions button { padding: 4px 8px; font-size: 12px; }
+.add-card-btn { width: 100%; background: transparent; border: 1px dashed var(--border); color: var(--muted); }
+
+/* ── modal ─────────────────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  display: flex; align-items: center; justify-content: center; z-index: 200;
+  padding: 20px;
+}
+.modal {
+  width: 100%; max-width: 420px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 24px; max-height: 90vh; overflow-y: auto;
+}
+.modal h2 { font-size: 16px; margin-bottom: 16px; }
+.modal .field textarea {
+  width: 100%; padding: 10px 12px; background: var(--bg-card-2);
+  border: 1px solid var(--border); border-radius: 8px; color: var(--text);
+  font-size: 14px; font-family: inherit; min-height: 70px; resize: vertical;
+}
+.modal .actions { display: flex; justify-content: space-between; margin-top: 20px; gap: 10px; }
+.row2 { display: flex; gap: 10px; }
+.row2 .field { flex: 1; }
+
+@media (max-width: 640px) {
+  nav { padding: 12px 16px; }
+  main { padding: 20px 12px 60px; }
+  .column { flex: 0 0 82vw; }
+}
