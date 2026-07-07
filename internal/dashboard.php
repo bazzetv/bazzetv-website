@@ -65,43 +65,46 @@ function fmt_num($n) {
       <h1>Dashboard</h1>
       <a class="btn secondary" href="dashboard.php?refresh=1">🔄 Rafraîchir</a>
     </div>
-    <div class="widget-grid">
-      <div class="widget">
-        <div class="label">Vues (mois en cours)</div>
-        <div class="value <?= delta_class($today['views_delta'] ?? null) ?>"><?= fmt_delta($today['views_delta'] ?? null) ?></div>
+    <section class="widget-section">
+      <h2>YouTube Analytics</h2>
+      <div class="widget-grid">
+        <div class="widget">
+          <div class="label">Vues (mois en cours)</div>
+          <div class="value <?= delta_class($today['views_delta'] ?? null) ?>"><?= fmt_delta($today['views_delta'] ?? null) ?></div>
+        </div>
+        <div class="widget">
+          <div class="label">Nouveaux abonnés (mois en cours)</div>
+          <div class="value <?= delta_class($today['subscribers_delta'] ?? null) ?>"><?= fmt_delta($today['subscribers_delta'] ?? null) ?></div>
+        </div>
+        <div class="widget">
+          <div class="label">Abonnés (total)</div>
+          <div class="value"><?= fmt_num($today['subscribers'] ?? null) ?></div>
+        </div>
+        <div class="widget">
+          <div class="label">Vues totales</div>
+          <div class="value"><?= fmt_num($today['views_total'] ?? null) ?></div>
+        </div>
+        <div class="widget">
+          <div class="label">Vidéos publiées</div>
+          <div class="value"><?= fmt_num($today['video_count'] ?? null) ?></div>
+        </div>
+        <div class="widget">
+          <div class="label">Minutes vues (mois en cours)</div>
+          <div class="value"><?= fmt_hours($today['watch_minutes'] ?? null) ?></div>
+        </div>
       </div>
-      <div class="widget">
-        <div class="label">Nouveaux abonnés (mois en cours)</div>
-        <div class="value <?= delta_class($today['subscribers_delta'] ?? null) ?>"><?= fmt_delta($today['subscribers_delta'] ?? null) ?></div>
-      </div>
-      <div class="widget">
-        <div class="label">Abonnés (total)</div>
-        <div class="value"><?= fmt_num($today['subscribers'] ?? null) ?></div>
-      </div>
-      <div class="widget">
-        <div class="label">Vues totales</div>
-        <div class="value"><?= fmt_num($today['views_total'] ?? null) ?></div>
-      </div>
-      <div class="widget">
-        <div class="label">Vidéos publiées</div>
-        <div class="value"><?= fmt_num($today['video_count'] ?? null) ?></div>
-      </div>
-      <div class="widget">
-        <div class="label">Minutes vues (mois en cours)</div>
-        <div class="value"><?= fmt_hours($today['watch_minutes'] ?? null) ?></div>
-      </div>
-    </div>
-    <?php if ($today): ?>
-      <p class="stale-note">Dernière collecte : <?= htmlspecialchars($today['stat_date']) ?> (les données YouTube Analytics ont 24-48h de latence, ce ne sont pas des chiffres "temps réel").</p>
-    <?php elseif (!$collectError): ?>
-      <p class="stale-note">Aucune donnée collectée pour l'instant — le script <code>internal/cron/collect-stats.php</code> doit tourner au moins une fois.</p>
-    <?php endif; ?>
-    <?php if ($collectError): ?>
-      <p class="stale-note">⚠️ La collecte a échoué : <?= htmlspecialchars($collectError) ?>. Vérifie les identifiants YouTube/Google dans les secrets.</p>
-    <?php endif; ?>
-    <?php if ($watchMinutesError): ?>
-      <p class="stale-note">⚠️ Minutes vues non récupérées (Analytics API) : <?= htmlspecialchars($watchMinutesError) ?></p>
-    <?php endif; ?>
+      <?php if ($today): ?>
+        <p class="stale-note">Dernière collecte : <?= htmlspecialchars($today['stat_date']) ?> (les données YouTube Analytics ont 24-48h de latence, ce ne sont pas des chiffres "temps réel").</p>
+      <?php elseif (!$collectError): ?>
+        <p class="stale-note">Aucune donnée collectée pour l'instant — le script <code>internal/cron/collect-stats.php</code> doit tourner au moins une fois.</p>
+      <?php endif; ?>
+      <?php if ($collectError): ?>
+        <p class="stale-note">⚠️ La collecte a échoué : <?= htmlspecialchars($collectError) ?>. Vérifie les identifiants YouTube/Google dans les secrets.</p>
+      <?php endif; ?>
+      <?php if ($watchMinutesError): ?>
+        <p class="stale-note">⚠️ Minutes vues non récupérées (Analytics API) : <?= htmlspecialchars($watchMinutesError) ?></p>
+      <?php endif; ?>
+    </section>
   </main>
 </body>
 </html>
