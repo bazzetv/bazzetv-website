@@ -82,7 +82,7 @@ function fmt_num($n) {
         <div class="value"><?= fmt_num($today['video_count'] ?? null) ?></div>
       </div>
       <div class="widget">
-        <div class="label">Minutes vues (hier)</div>
+        <div class="label">Minutes vues (mois en cours)</div>
         <div class="value"><?= fmt_num($today['watch_minutes'] ?? null) ?></div>
       </div>
     </div>

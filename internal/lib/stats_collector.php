@@ -46,9 +46,17 @@ function collect_youtube_stats(): array {
 
   $statDate = date('Y-m-d', strtotime('-1 day'));
 
+  // Month-to-date range instead of a single day: a single day's watch-time
+  // is unreliable (YouTube's processing lag can exceed 24h and return no
+  // rows at all), but a wider range almost always has usable data.
+  $monthStart = date('Y-m-01');
+  if ($monthStart > $statDate) {
+    $monthStart = $statDate; // 1st of the month: avoid an inverted range
+  }
+
   $analytics = yt_curl_json(
     'https://youtubeanalytics.googleapis.com/v2/reports?ids=channel%3D%3D' . YT_CHANNEL_ID .
-    "&startDate={$statDate}&endDate={$statDate}&metrics=estimatedMinutesWatched",
+    "&startDate={$monthStart}&endDate={$statDate}&metrics=estimatedMinutesWatched",
     $authHeaders
   );
   $watchMinutes = isset($analytics['rows'][0][0]) ? (int)$analytics['rows'][0][0] : null;
