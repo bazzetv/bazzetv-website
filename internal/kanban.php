@@ -34,6 +34,7 @@ $stagesPairs = array_map(fn($k, $v) => [$k, $v], array_keys($stages), array_valu
     <h1>Collaborations</h1>
     <div class="board-toolbar">
       <button id="new-card-btn">+ Nouvelle collaboration</button>
+      <div class="month-filter" id="month-filter"></div>
     </div>
     <div class="board-summary" id="board-summary"></div>
     <div class="board" id="board" data-stages='<?= htmlspecialchars(json_encode($stagesPairs), ENT_QUOTES) ?>'></div>

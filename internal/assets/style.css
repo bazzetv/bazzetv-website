@@ -112,7 +112,20 @@ button:hover, .btn:hover { filter: brightness(1.1); }
 .error { color: var(--red); font-size: 13px; margin-bottom: 12px; }
 
 /* ── kanban ────────────────────────────────────────────────────── */
-.board-toolbar { display: flex; justify-content: flex-end; margin-bottom: 16px; }
+.board-toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.month-filter { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+.month-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.month-btn:hover { border-color: var(--border-hover); color: var(--text); }
+.month-btn.active { border-color: var(--accent); color: var(--text); background: rgba(108,71,255,0.12); }
 .board-summary {
   display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;
 }

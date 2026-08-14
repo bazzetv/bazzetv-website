@@ -20,6 +20,7 @@ jobs:
           node-version: '20'
 
       - name: Inject YouTube stats
+        continue-on-error: true
         run: node scripts/inject-yt-stats.mjs
         env:
           YOUTUBE_API_KEY:       ${{ secrets.YOUTUBE_API_KEY }}

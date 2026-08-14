@@ -9,6 +9,34 @@
   const paymentLabels = { unpaid: 'Non payé', pending: 'En attente', partial: 'Partiel', paid: 'Payé' };
 
   let cards = [];
+  let activeMonth = null; // null = Global
+
+  const MONTHS = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+
+  function buildMonthFilter() {
+    const container = document.getElementById('month-filter');
+    container.innerHTML = '';
+    const allBtn = document.createElement('button');
+    allBtn.className = 'month-btn' + (activeMonth === null ? ' active' : '');
+    allBtn.textContent = 'Global';
+    allBtn.addEventListener('click', () => { activeMonth = null; buildMonthFilter(); render(); });
+    container.appendChild(allBtn);
+    MONTHS.forEach((label, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'month-btn' + (activeMonth === i ? ' active' : '');
+      btn.textContent = label;
+      btn.addEventListener('click', () => { activeMonth = i; buildMonthFilter(); render(); });
+      container.appendChild(btn);
+    });
+  }
+
+  function filteredCards() {
+    if (activeMonth === null) return cards;
+    return cards.filter(c => {
+      if (!c.deadline) return false;
+      return new Date(c.deadline + 'T00:00:00').getMonth() === activeMonth;
+    });
+  }
 
   function fmtAmount(n) {
     return Number(n).toLocaleString('fr-FR', { minimumFractionDigits: 0 }) + ' EUR';
@@ -80,8 +108,9 @@
   }
 
   function renderSummary() {
-    const paid = cards.filter((c) => c.payment_status === 'paid');
-    const pending = cards.filter((c) => c.payment_status !== 'paid');
+    const fc = filteredCards();
+    const paid = fc.filter((c) => c.payment_status === 'paid');
+    const pending = fc.filter((c) => c.payment_status !== 'paid');
     summary.innerHTML = `
       <div class="summary-pill pending">En attente<strong>${fmtAmount(sumAmount(pending))}</strong></div>
       <div class="summary-pill paid">Payé<strong>${fmtAmount(sumAmount(paid))}</strong></div>
@@ -91,11 +120,12 @@
   function render() {
     renderSummary();
     board.innerHTML = '';
+    const fc = filteredCards();
     for (const [key, label] of stages) {
       const col = document.createElement('div');
       col.className = 'column';
       col.dataset.stage = key;
-      const inStage = cards.filter((c) => c.stage === key);
+      const inStage = fc.filter((c) => c.stage === key);
       const total = sumAmount(inStage);
       col.innerHTML = `<h2>${label} <span class="count">(${inStage.length})</span>${total > 0 ? `<span class="column-total">${fmtAmount(total)}</span>` : ''}</h2>`;
       inStage.forEach((c) => col.appendChild(cardEl(c)));
@@ -117,6 +147,7 @@
   async function load() {
     const data = await api('list', null, 'GET');
     cards = data.cards;
+    buildMonthFilter();
     render();
   }
 
