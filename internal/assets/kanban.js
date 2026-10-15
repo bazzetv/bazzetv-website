@@ -108,13 +108,21 @@
   }
 
   function renderSummary() {
-    const fc = filteredCards();
-    const paid = fc.filter((c) => c.payment_status === 'paid');
-    const pending = fc.filter((c) => c.payment_status !== 'paid');
-    summary.innerHTML = `
-      <div class="summary-pill pending">En attente<strong>${fmtAmount(sumAmount(pending))}</strong></div>
-      <div class="summary-pill paid">Payé<strong>${fmtAmount(sumAmount(paid))}</strong></div>
-    `;
+    if (activeMonth === null) {
+      const paid = cards.filter((c) => c.payment_status === 'paid');
+      const pending = cards.filter((c) => c.payment_status !== 'paid');
+      summary.innerHTML = `
+        <div class="summary-pill pending">En attente<strong>${fmtAmount(sumAmount(pending))}</strong></div>
+        <div class="summary-pill paid">Payé<strong>${fmtAmount(sumAmount(paid))}</strong></div>
+      `;
+    } else {
+      const fc = filteredCards();
+      const unpaidDelivered = fc.filter((c) => c.stage === 'delivered' && c.payment_status !== 'paid');
+      const monthLabel = MONTHS[activeMonth];
+      summary.innerHTML = `
+        <div class="summary-pill pending">Livrés non payés — ${monthLabel}<strong>${fmtAmount(sumAmount(unpaidDelivered))}</strong></div>
+      `;
+    }
   }
 
   function render() {
