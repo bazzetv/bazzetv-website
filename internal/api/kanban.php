@@ -109,7 +109,8 @@ switch ($action) {
     $maxPos->execute([$stage, $id]);
     $position = (int)$maxPos->fetchColumn() + 1;
 
-    $stmt = db()->prepare('UPDATE kanban_cards SET stage = ?, position = ? WHERE id = ?');
+    $extraSet = $stage === 'paid' ? ', payment_status = \'paid\'' : '';
+    $stmt = db()->prepare('UPDATE kanban_cards SET stage = ?, position = ?' . $extraSet . ' WHERE id = ?');
     $stmt->execute([$stage, $position, $id]);
 
     $card = db()->prepare('SELECT * FROM kanban_cards WHERE id = ?');
