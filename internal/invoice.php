@@ -106,21 +106,26 @@ $currency    = $card['currency'] ?: 'EUR';
   <div class="parties">
     <div class="party">
       <h3>From</h3>
-      <p><?= $s('profile_name', 'BazzeTV') ?>
-<?php if ($settings['profile_address'] ?? ''): ?>
-<?= $s('profile_address') ?>
-<?php endif; ?><?php if ($settings['profile_phone'] ?? ''): ?>
-<?= $s('profile_phone') ?>
-<?php endif; ?><?php if ($settings['profile_email'] ?? ''): ?>
-<?= $s('profile_email') ?><?php endif; ?></p>
+      <?php
+        $fromLines = array_filter([
+          $settings['profile_name'] ?? 'BazzeTV',
+          $settings['profile_address'] ?? '',
+          $settings['profile_phone'] ?? '',
+          $settings['profile_email'] ?? '',
+        ]);
+      ?>
+      <p><?= nl2br(htmlspecialchars(implode("\n", $fromLines))) ?></p>
     </div>
     <div class="party">
       <h3>Bill to</h3>
-      <p><?= htmlspecialchars($card['client_company'] ?: ($card['client_name'] ?? '—')) ?>
-<?php if ($card['client_address']): ?>
-<?= htmlspecialchars($card['client_address']) ?>
-<?php endif; ?><?php if ($card['client_email']): ?>
-<?= htmlspecialchars($card['client_email']) ?><?php endif; ?></p>
+      <?php
+        $billLines = array_filter([
+          $card['client_company'] ?: ($card['client_name'] ?? '—'),
+          $card['client_address'] ?? '',
+          $card['client_email'] ?? '',
+        ]);
+      ?>
+      <p><?= nl2br(htmlspecialchars(implode("\n", $billLines))) ?></p>
     </div>
   </div>
 
