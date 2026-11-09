@@ -38,7 +38,7 @@ $s = function(string $key, string $fallback = '') use ($settings): string {
 };
 
 $invoiceDate = date('F j, Y');
-$dueDate     = $card['deadline'] ? date('F j, Y', strtotime($card['deadline'])) : 'Upon receipt';
+$dueDate     = date('F j, Y', strtotime('+30 days'));
 $amount      = $card['payment_amount'] !== null ? number_format((float)$card['payment_amount'], 2) : '0.00';
 $currency    = $card['currency'] ?: 'EUR';
 ?>
@@ -109,6 +109,8 @@ $currency    = $card['currency'] ?: 'EUR';
       <p><?= $s('profile_name', 'BazzeTV') ?>
 <?php if ($settings['profile_address'] ?? ''): ?>
 <?= $s('profile_address') ?>
+<?php endif; ?><?php if ($settings['profile_phone'] ?? ''): ?>
+<?= $s('profile_phone') ?>
 <?php endif; ?><?php if ($settings['profile_email'] ?? ''): ?>
 <?= $s('profile_email') ?><?php endif; ?></p>
     </div>

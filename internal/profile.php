@@ -29,9 +29,15 @@ $activePage = 'profile';
         <label>Adresse</label>
         <textarea name="profile_address" placeholder="2 rue des Vignes&#10;67270 Kienheim, France"></textarea>
       </div>
-      <div class="field">
-        <label>Email</label>
-        <input type="email" name="profile_email" placeholder="contact@bazzetv.com">
+      <div class="row2">
+        <div class="field">
+          <label>Email</label>
+          <input type="email" name="profile_email" placeholder="contact@bazzetv.com">
+        </div>
+        <div class="field">
+          <label>Téléphone</label>
+          <input type="text" name="profile_phone" placeholder="+33 7 67 31 10 81">
+        </div>
       </div>
       <div class="field">
         <label>Nom du compte bancaire</label>
