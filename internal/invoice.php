@@ -114,10 +114,8 @@ $currency    = $card['currency'] ?: 'EUR';
     </div>
     <div class="party">
       <h3>Bill to</h3>
-      <p><?= htmlspecialchars($card['client_name'] ?? '—') ?>
-<?php if ($card['client_company']): ?>
-<?= htmlspecialchars($card['client_company']) ?>
-<?php endif; ?><?php if ($card['client_address']): ?>
+      <p><?= htmlspecialchars($card['client_company'] ?: ($card['client_name'] ?? '—')) ?>
+<?php if ($card['client_address']): ?>
 <?= htmlspecialchars($card['client_address']) ?>
 <?php endif; ?><?php if ($card['client_email']): ?>
 <?= htmlspecialchars($card['client_email']) ?><?php endif; ?></p>
