@@ -35,7 +35,17 @@ nav {
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
 }
+nav .nav-left { display: flex; align-items: center; gap: 10px; }
 nav .brand { font-weight: 700; letter-spacing: 0.02em; }
+
+/* avatar menu */
+.avatar-wrap { position: relative; }
+.nav-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s; }
+.nav-avatar:hover { border-color: var(--accent); }
+.avatar-dropdown { display: none; position: absolute; top: calc(100% + 8px); left: 0; min-width: 140px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; z-index: 300; }
+.avatar-dropdown.open { display: block; }
+.avatar-dropdown a { display: block; padding: 10px 14px; font-size: 13px; text-decoration: none; color: var(--text); }
+.avatar-dropdown a:hover { background: var(--bg-card-2); }
 nav .links { display: flex; gap: 20px; align-items: center; }
 nav .links a {
   text-decoration: none; color: var(--muted); font-size: 14px; font-weight: 500;
@@ -199,6 +209,26 @@ button:hover, .btn:hover { filter: brightness(1.1); }
 .modal .actions { display: flex; justify-content: space-between; margin-top: 20px; gap: 10px; }
 .row2 { display: flex; gap: 10px; }
 .row2 .field { flex: 1; }
+
+/* form-card (profile / clients pages) */
+.form-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 24px; max-width: 540px; }
+.form-hint { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+.field-link { font-size: 11px; color: var(--accent); text-decoration: none; margin-left: 8px; }
+.field-link:hover { text-decoration: underline; }
+input[type="email"], input[type="number"], select, textarea {
+  width: 100%; padding: 10px 12px;
+  background: var(--bg-card-2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); font-size: 14px; font-family: inherit;
+}
+select { cursor: pointer; }
+textarea { min-height: 70px; resize: vertical; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--border-hover); }
+
+/* clients table */
+.clients-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.clients-table th { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+.clients-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: top; }
+.clients-table tr:last-child td { border-bottom: none; }
 
 @media (max-width: 640px) {
   nav { padding: 12px 16px; }

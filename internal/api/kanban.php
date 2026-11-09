@@ -30,7 +30,12 @@ if ($method === 'POST') {
 
 switch ($action) {
   case 'list':
-    $cards = db()->query('SELECT * FROM kanban_cards ORDER BY stage, position, id')->fetchAll();
+    $cards = db()->query('
+      SELECT k.*, c.name as client_name, c.company as client_company
+      FROM kanban_cards k
+      LEFT JOIN clients c ON c.id = k.client_id
+      ORDER BY k.stage, k.position, k.id
+    ')->fetchAll();
     echo json_encode(['cards' => $cards]);
     break;
 
@@ -48,8 +53,8 @@ switch ($action) {
     $maxPos->execute([$stage]);
     $position = (int)$maxPos->fetchColumn() + 1;
 
-    $stmt = db()->prepare('INSERT INTO kanban_cards (brand, contact, deadline, payment_status, payment_amount, currency, notes, stage, position)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    $stmt = db()->prepare('INSERT INTO kanban_cards (brand, contact, deadline, payment_status, payment_amount, currency, notes, stage, position, client_id, service_description)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
     $stmt->execute([
       $brand,
       $body['contact'] ?: null,
@@ -60,6 +65,8 @@ switch ($action) {
       $body['notes'] ?: null,
       $stage,
       $position,
+      $body['client_id'] ? (int)$body['client_id'] : null,
+      $body['service_description'] ?: null,
     ]);
     $id = db()->lastInsertId();
     $card = db()->prepare('SELECT * FROM kanban_cards WHERE id = ?');
@@ -76,7 +83,7 @@ switch ($action) {
     $existing->execute([$id]);
     if (!$existing->fetch()) not_found();
 
-    $fields = ['brand', 'contact', 'deadline', 'payment_status', 'payment_amount', 'currency', 'notes', 'stage'];
+    $fields = ['brand', 'contact', 'deadline', 'payment_status', 'payment_amount', 'currency', 'notes', 'stage', 'client_id', 'service_description'];
     $set = [];
     $params = [];
     foreach ($fields as $f) {

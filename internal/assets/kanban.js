@@ -9,6 +9,19 @@
   const paymentLabels = { unpaid: 'Non payé', pending: 'En attente', partial: 'Partiel', paid: 'Payé' };
 
   let cards = [];
+  let clientsList = [];
+
+  async function loadClients() {
+    const data = await api('list', null, 'GET', 'api/clients.php');
+    clientsList = data.clients || [];
+  }
+
+  function populateClientSelect(selectedId) {
+    const sel = document.getElementById('client-select');
+    if (!sel) return;
+    sel.innerHTML = '<option value="">— Sélectionner un client —</option>' +
+      clientsList.map(c => `<option value="${c.id}" ${String(c.id) === String(selectedId) ? 'selected' : ''}>${c.name}${c.company ? ' – ' + c.company : ''}</option>`).join('');
+  }
   let activeMonth = null; // null = Global
 
   const MONTHS = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
@@ -46,10 +59,11 @@
     return list.reduce((s, c) => s + (c.payment_amount !== null ? Number(c.payment_amount) : 0), 0);
   }
 
-  async function api(action, payload, method) {
+  async function api(action, payload, method, endpoint) {
     const opts = { method: method || 'POST', headers: { 'Content-Type': 'application/json' } };
     if (opts.method === 'POST') opts.body = JSON.stringify(payload || {});
-    const res = await fetch('api/kanban.php?action=' + action, opts);
+    const base = endpoint || 'api/kanban.php';
+    const res = await fetch(base + '?action=' + action, opts);
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
       throw new Error(data.error || ('HTTP ' + res.status));
@@ -77,22 +91,29 @@
       ? Number(card.payment_amount).toLocaleString('fr-FR', { minimumFractionDigits: 0 }) + ' ' + (card.currency || 'EUR')
       : '';
 
+    const clientLabel = card.client_name || card.contact || '';
     el.innerHTML = `
       <div class="brand"></div>
       <div class="meta">
         ${card.deadline ? `<span class="tag">⏱ ${fmtDate(card.deadline)}</span>` : ''}
-        ${card.contact ? `<span class="tag contact"></span>` : ''}
+        ${clientLabel ? `<span class="tag contact"></span>` : ''}
         <span class="tag ${card.payment_status}">${paymentLabels[card.payment_status]}${amount ? ' · ' + amount : ''}</span>
       </div>
       <div class="move-row">
         <select class="stage-select">${stageOptions}</select>
         <div class="card-actions">
+          ${card.client_id ? `<button type="button" class="btn secondary invoice-btn" title="Générer la facture">📄</button>` : ''}
           <button type="button" class="btn secondary edit-btn">✎</button>
         </div>
       </div>
     `;
     el.querySelector('.brand').textContent = card.brand;
-    if (card.contact) el.querySelector('.tag.contact').textContent = card.contact;
+    if (clientLabel) el.querySelector('.tag.contact').textContent = clientLabel;
+    if (card.client_id) {
+      el.querySelector('.invoice-btn').addEventListener('click', () => {
+        window.open('invoice.php?card_id=' + card.id, '_blank');
+      });
+    }
 
     el.querySelector('.stage-select').addEventListener('change', async (e) => {
       await api('move', { id: card.id, stage: e.target.value });
@@ -151,7 +172,10 @@
   }
 
   async function load() {
-    const data = await api('list', null, 'GET');
+    const [data] = await Promise.all([
+      api('list', null, 'GET'),
+      clientsList.length ? Promise.resolve() : loadClients(),
+    ]);
     cards = data.cards;
     buildMonthFilter();
     render();
@@ -162,14 +186,15 @@
     form.id.value = card ? card.id : '';
     modalTitle.textContent = card ? 'Modifier la collaboration' : 'Nouvelle collaboration';
     deleteBtn.style.display = card ? '' : 'none';
+    populateClientSelect(card ? card.client_id : '');
     if (card) {
       form.brand.value = card.brand || '';
-      form.contact.value = card.contact || '';
       form.deadline.value = card.deadline || '';
       form.stage.value = card.stage;
       form.payment_status.value = card.payment_status;
       form.payment_amount.value = card.payment_amount ?? '';
       form.notes.value = card.notes || '';
+      if (form.service_description) form.service_description.value = card.service_description || '';
     }
     modalBackdrop.style.display = 'flex';
   }
@@ -186,13 +211,14 @@
     e.preventDefault();
     const payload = {
       brand: form.brand.value.trim(),
-      contact: form.contact.value.trim(),
       deadline: form.deadline.value,
       stage: form.stage.value,
       payment_status: form.payment_status.value,
       payment_amount: form.payment_amount.value === '' ? null : form.payment_amount.value,
       currency: 'EUR',
       notes: form.notes.value.trim(),
+      client_id: form.client_id ? (form.client_id.value || null) : null,
+      service_description: form.service_description ? form.service_description.value.trim() : '',
     };
     if (form.id.value) {
       payload.id = Number(form.id.value);

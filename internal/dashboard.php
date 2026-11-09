@@ -52,14 +52,7 @@ function fmt_num($n) {
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-  <nav>
-    <div class="brand">bazzetv internal</div>
-    <div class="links">
-      <a href="dashboard.php" class="active">Dashboard</a>
-      <a href="kanban.php">Kanban</a>
-      <a href="logout.php" class="logout">Déconnexion</a>
-    </div>
-  </nav>
+  <?php $activePage = 'dashboard'; include '_nav.php'; ?>
   <main>
     <div class="page-header">
       <h1>Dashboard</h1>

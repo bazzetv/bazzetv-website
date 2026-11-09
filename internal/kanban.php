@@ -22,14 +22,7 @@ $stagesPairs = array_map(fn($k, $v) => [$k, $v], array_keys($stages), array_valu
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-  <nav>
-    <div class="brand">bazzetv internal</div>
-    <div class="links">
-      <a href="dashboard.php">Dashboard</a>
-      <a href="kanban.php" class="active">Kanban</a>
-      <a href="logout.php" class="logout">Déconnexion</a>
-    </div>
-  </nav>
+  <?php $activePage = 'kanban'; include '_nav.php'; ?>
   <main>
     <h1>Collaborations</h1>
     <div class="board-toolbar">
@@ -50,8 +43,14 @@ $stagesPairs = array_map(fn($k, $v) => [$k, $v], array_keys($stages), array_valu
           <input type="text" name="brand" required>
         </div>
         <div class="field">
-          <label>Contact</label>
-          <input type="text" name="contact" placeholder="email, insta, discord...">
+          <label>Client <a href="clients.php" class="field-link" target="_blank">+ Gérer les clients</a></label>
+          <select name="client_id" id="client-select">
+            <option value="">— Sélectionner un client —</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Description du service (facture)</label>
+          <textarea name="service_description" placeholder="ex: Vidéo dédiée YouTube – KTC H27E6S 27&quot; Gaming Monitor&#10;Channel: BazzeTV (YouTube)&#10;Publish date: …"></textarea>
         </div>
         <div class="row2">
           <div class="field">
