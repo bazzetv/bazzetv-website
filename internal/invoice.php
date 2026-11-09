@@ -33,9 +33,9 @@ if (!$card['invoice_number']) {
 
 // Load profile settings
 $settings = db()->query('SELECT `key`, value FROM settings')->fetchAll(PDO::FETCH_KEY_PAIR);
-function s(string $key, string $fallback = '') use ($settings): string {
+$s = function(string $key, string $fallback = '') use ($settings): string {
   return htmlspecialchars($settings[$key] ?? $fallback);
-}
+};
 
 $invoiceDate = date('F j, Y');
 $dueDate     = $card['deadline'] ? date('F j, Y', strtotime($card['deadline'])) : 'Upon receipt';
@@ -106,9 +106,9 @@ $currency    = $card['currency'] ?: 'EUR';
   <div class="parties">
     <div class="party">
       <h3>From</h3>
-      <p><?= s('profile_name', 'BazzeTV') ?><?php if ($settings['profile_address'] ?? ''): ?>
-<?= s('profile_address') ?><?php endif; ?>
-<?php if ($settings['profile_email'] ?? ''): ?><?= s('profile_email') ?><?php endif; ?></p>
+      <p><?= $s('profile_name', 'BazzeTV') ?><?php if ($settings['profile_address'] ?? ''): ?>
+<?= $s('profile_address') ?><?php endif; ?>
+<?php if ($settings['profile_email'] ?? ''): ?><?= $s('profile_email') ?><?php endif; ?></p>
     </div>
     <div class="party">
       <h3>Bill to</h3>
@@ -136,24 +136,24 @@ $currency    = $card['currency'] ?: 'EUR';
   </table>
 
   <?php if ($settings['profile_vat_note'] ?? ''): ?>
-    <p class="vat-note"><?= s('profile_vat_note') ?></p>
+    <p class="vat-note"><?= $s('profile_vat_note') ?></p>
   <?php endif; ?>
 
   <?php if ($settings['profile_iban'] ?? ''): ?>
   <div class="payment-section">
     <h3>Payment details</h3>
     <?php if ($settings['profile_account_name'] ?? ''): ?>
-      <div class="payment-row"><span class="label">Account name</span><span><?= s('profile_account_name') ?></span></div>
+      <div class="payment-row"><span class="label">Account name</span><span><?= $s('profile_account_name') ?></span></div>
     <?php endif; ?>
-    <div class="payment-row"><span class="label">IBAN</span><span><?= s('profile_iban') ?></span></div>
+    <div class="payment-row"><span class="label">IBAN</span><span><?= $s('profile_iban') ?></span></div>
     <?php if ($settings['profile_bic'] ?? ''): ?>
-      <div class="payment-row"><span class="label">BIC / SWIFT</span><span><?= s('profile_bic') ?></span></div>
+      <div class="payment-row"><span class="label">BIC / SWIFT</span><span><?= $s('profile_bic') ?></span></div>
     <?php endif; ?>
     <?php if ($settings['profile_bank_name'] ?? ''): ?>
-      <div class="payment-row"><span class="label">Bank name</span><span><?= s('profile_bank_name') ?></span></div>
+      <div class="payment-row"><span class="label">Bank name</span><span><?= $s('profile_bank_name') ?></span></div>
     <?php endif; ?>
     <?php if ($settings['profile_bank_address'] ?? ''): ?>
-      <div class="payment-row"><span class="label">Bank address</span><span><?= s('profile_bank_address') ?></span></div>
+      <div class="payment-row"><span class="label">Bank address</span><span><?= $s('profile_bank_address') ?></span></div>
     <?php endif; ?>
   </div>
   <?php endif; ?>
