@@ -106,16 +106,21 @@ $currency    = $card['currency'] ?: 'EUR';
   <div class="parties">
     <div class="party">
       <h3>From</h3>
-      <p><?= $s('profile_name', 'BazzeTV') ?><?php if ($settings['profile_address'] ?? ''): ?>
-<?= $s('profile_address') ?><?php endif; ?>
-<?php if ($settings['profile_email'] ?? ''): ?><?= $s('profile_email') ?><?php endif; ?></p>
+      <p><?= $s('profile_name', 'BazzeTV') ?>
+<?php if ($settings['profile_address'] ?? ''): ?>
+<?= $s('profile_address') ?>
+<?php endif; ?><?php if ($settings['profile_email'] ?? ''): ?>
+<?= $s('profile_email') ?><?php endif; ?></p>
     </div>
     <div class="party">
       <h3>Bill to</h3>
       <p><?= htmlspecialchars($card['client_name'] ?? '—') ?>
-<?php if ($card['client_company']): ?><?= htmlspecialchars($card['client_company']) ?>
-<?php endif; ?><?php if ($card['client_address']): ?><?= htmlspecialchars($card['client_address']) ?>
-<?php endif; ?><?php if ($card['client_email']): ?><?= htmlspecialchars($card['client_email']) ?><?php endif; ?></p>
+<?php if ($card['client_company']): ?>
+<?= htmlspecialchars($card['client_company']) ?>
+<?php endif; ?><?php if ($card['client_address']): ?>
+<?= htmlspecialchars($card['client_address']) ?>
+<?php endif; ?><?php if ($card['client_email']): ?>
+<?= htmlspecialchars($card['client_email']) ?><?php endif; ?></p>
     </div>
   </div>
 
