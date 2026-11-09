@@ -109,14 +109,17 @@
 
   function renderSummary() {
     const fc = filteredCards();
-    const paid = cards.filter((c) => c.payment_status === 'paid');
-    const pending = cards.filter((c) => c.payment_status !== 'paid');
+    const src = activeMonth !== null ? fc : cards;
+    const paid = src.filter((c) => c.payment_status === 'paid');
+    const pending = src.filter((c) => c.payment_status !== 'paid');
     const unpaidDelivered = fc.filter((c) => c.stage === 'delivered' && c.payment_status !== 'paid');
+    const totalGlobal = sumAmount(cards);
     const monthLabel = activeMonth !== null ? ' — ' + MONTHS[activeMonth] : '';
     summary.innerHTML = `
       <div class="summary-pill pending">En attente<strong>${fmtAmount(sumAmount(pending))}</strong></div>
       <div class="summary-pill paid">Payé<strong>${fmtAmount(sumAmount(paid))}</strong></div>
       <div class="summary-pill unpaid-delivered">Livrés non payés${monthLabel}<strong>${fmtAmount(sumAmount(unpaidDelivered))}</strong></div>
+      <div class="summary-pill total">Total global<strong>${fmtAmount(totalGlobal)}</strong></div>
     `;
   }
 

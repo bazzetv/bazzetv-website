@@ -138,6 +138,7 @@ button:hover, .btn:hover { filter: brightness(1.1); }
 .summary-pill.pending strong { color: var(--red); }
 .summary-pill.paid strong { color: var(--green); }
 .summary-pill.unpaid-delivered strong { color: var(--yellow); }
+.summary-pill.total strong { color: var(--text); }
 .column-total {
   font-size: 12px; color: var(--muted); font-weight: 400; display: block; margin-top: 2px;
 }
