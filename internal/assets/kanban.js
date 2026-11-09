@@ -113,7 +113,7 @@
     const paid = src.filter((c) => c.payment_status === 'paid');
     const pending = src.filter((c) => c.payment_status !== 'paid');
     const unpaidDelivered = fc.filter((c) => c.stage === 'delivered' && c.payment_status !== 'paid');
-    const totalGlobal = sumAmount(cards);
+    const totalGlobal = sumAmount(fc);
     const monthLabel = activeMonth !== null ? ' — ' + MONTHS[activeMonth] : '';
     summary.innerHTML = `
       <div class="summary-pill pending">En attente<strong>${fmtAmount(sumAmount(pending))}</strong></div>
