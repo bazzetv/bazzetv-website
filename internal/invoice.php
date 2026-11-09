@@ -68,7 +68,7 @@ $currency    = $card['currency'] ?: 'EUR';
 
     .parties { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 40px; }
     .party h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-bottom: 8px; }
-    .party p { font-size: 13px; line-height: 1.7; white-space: pre-line; }
+    .party p { font-size: 13px; line-height: 1.7; }
 
     table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
     thead th { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 10px 12px; background: #f4f4f8; border: 1px solid #e0e0e8; text-align: left; }
